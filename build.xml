@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="search module" default="build" basedir=".">
+
+    <property name="scala-library.jar" value="../../modules/scala/lib/scala-library.jar" />
+           
+    <path id="project.classpath">
+      <pathelement location="${scala-library.jar}"   />
+        <pathelement path="../../framework/classes"/>
+        <fileset dir="../../framework/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="../../modules/scala/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="init">
+      <taskdef resource="scala/tools/ant/antlib.xml">
+          <classpath>
+            <pathelement location="../../modules/scala/lib/scala-compiler.jar"   />
+            <pathelement location="${scala-library.jar}"   />
+          </classpath>
+      </taskdef>
+    </target>
+    
+    <target name="build" depends="compile">
+        <copy todir="tmp/classes">
+            <fileset dir="src">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+                <include name="**/play.plugins"/>
+                <include name="**/play.static"/>
+            </fileset>
+        </copy>
+        <jar destfile="lib/scala-query-plugin.jar" basedir="tmp/classes">
+            <manifest>
+                <section name="Play">
+                    <attribute name="Specification-Title" value="Search module"/>
+                </section>
+            </manifest>
+        </jar>
+        <delete dir="tmp" />
+    </target>
+
+    <target name="compile" depends="init">
+        <mkdir dir="tmp/classes" />
+        <scalac srcdir="src"
+                destdir="tmp/classes"
+                classpathref="project.classpath">
+        </scalac>
+    </target>
+
+</project>
